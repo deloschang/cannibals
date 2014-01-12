@@ -1,4 +1,7 @@
 package cannibals;
+// Author: Delos Chang
+// With source: Prof. Balkcom, CannibalProblem model
+// 1/14/14
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +25,11 @@ public class CannibalProblem extends UUSearchProblem {
 		goalb = gb;
 		totalMissionaries = sm;
 		totalCannibals = sc;
+	}
+	
+	private void testSuccessors(){
+		ArrayList<UUSearchNode> retArr = startNode.getSuccessors();
+		System.out.println(retArr);
 	}
 	
 	// node class used by searches.  Searches themselves are implemented
@@ -167,7 +175,7 @@ public class CannibalProblem extends UUSearchProblem {
 		@Override
 		public boolean goalTest() {
 			// you write this method.  (It should be only one line long.)
-			return totalMissionaries == 0 && totalCannibals == 0;
+			return totalMissionaries == goalm && totalCannibals == goalc;
 		}
 
 		// an equality test is required so that visited lists in searches

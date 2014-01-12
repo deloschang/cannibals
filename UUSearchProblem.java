@@ -2,10 +2,8 @@ package cannibals;
 
 
 // Author: Delos Chang
-// Source: Devin Balkcom
-// CLEARLY INDICATE THE AUTHOR OF THE FILE HERE (YOU),
-//  AND ATTRIBUTE ANY SOURCES USED (INCLUDING THIS STUB, BY
-//  DEVIN BALKCOM).
+// With source: Prof. Balkcom, UUSearch Problem model
+// 1/14/14
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,11 +34,37 @@ public abstract class UUSearchProblem {
 	//  therefore, constructor of specific problems should set up start
 	//  and goal conditions, etc.
 	
-	public void breadthFirstSearch(){
-//	public List<UUSearchNode> breadthFirstSearch(){
+	public List<UUSearchNode> breadthFirstSearch(){
+		// Initialize queue with start node
+		Queue<UUSearchNode> queue = new LinkedList<UUSearchNode>();
+		queue.add(startNode);
+		HashMap<Integer, UUSearchNode> visited = new HashMap<Integer, UUSearchNode>();
+		
+		// set the startNode Missionary/Cannibal combo to "visited"
+		int key = startNode.hashCode();
+		
+		// visited 'key' will contain the hashCode of the node 
+		// visited 'value' will contain the node's predecessor node 
+		// startNode has no predecessor
+		visited.put(key, null);
+		
+		while(!queue.isEmpty()){
+			UUSearchNode parentNode = (UUSearchNode) queue.remove();
+			ArrayList<UUSearchNode> children = parentNode.getSuccessors();
+			for(int i=0; i < children.size(); i++){
+				// if haven't seen before
+				UUSearchNode childNode = children.get(i);
+				int nodeKey = childNode.hashCode();
+				if (!visited.containsKey(nodeKey)){
+					// mark previous node 
+					visited.put(nodeKey, parentNode);
+					queue.add(childNode);
+				}
+			}
+		}
+		
+		
 		resetStats();
-		// You will write this method
-
 	}
 	
 	// backchain should only be used by bfs, not the recursive dfs
