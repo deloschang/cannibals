@@ -14,8 +14,10 @@ public class CannibalDriver {
 
 		// set up the "standard" 331 problem:
 		CannibalProblem mcProblem = new CannibalProblem(3, 3, 1, 0, 0, 0);
+		
+		// Test levels 2 and 3
 		ArrayList<UUSearchNode> retArr = mcProblem.startNode.getSuccessors();
-		System.out.println(retArr.get(0).getSuccessors());
+		System.out.println(retArr.get(0).getSuccessors().get(1).getSuccessors());
 	
 //		List<UUSearchProblem.UUSearchNode> path;
 		

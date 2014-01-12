@@ -117,10 +117,15 @@ public class CannibalProblem extends UUSearchProblem {
 					
 					// Must fit in boat and have at least one missionary rowing
 					if (missCount + cannCount <= BOAT_SIZE && (missCount > 0 || cannCount > 0)){
+						// Must have something happen
+						if (missCount == 0 && cannCount == 0){
+							continue;
+						}
+						
 						if (boatPlace == 1){
 							// boat on starting side so starting side is subtracted
 							possNode = new CannibalNode(candMissionaries - missCount, 
-									candMissionaries - cannCount, candBoat, depth+1);
+									candCannibals - cannCount, candBoat, depth+1);
 						} else {
 							// boat on other side so starting side is added
 							possNode = new CannibalNode( state[0] + missCount, 
@@ -135,6 +140,7 @@ public class CannibalProblem extends UUSearchProblem {
 //					boolean isValid = isValidState(possNode);
 					if (isSafe){
 						// State is valid, add to the array
+						System.out.println("Adding " + possNode);
 						retArr.add(possNode);
 					} else {
 						// Node was not a valid state
