@@ -152,10 +152,6 @@ public class CannibalProblem extends UUSearchProblem {
 						retArr.add(possNode);
 					} else {
 						// Node was not a valid state
-						System.out.println("missionaries: " + missCount);
-						System.out.println("cannibals: " + cannCount);
-						System.out.println("candBoat: " + candBoat);
-						System.out.println("depth: " + depth);
 						System.out.println("Not a safe state!");
 					}
 				}
@@ -175,7 +171,7 @@ public class CannibalProblem extends UUSearchProblem {
 		@Override
 		public boolean goalTest() {
 			// you write this method.  (It should be only one line long.)
-			return totalMissionaries == goalm && totalCannibals == goalc;
+			return state[0] == goalm && state[1] == goalc;
 		}
 
 		// an equality test is required so that visited lists in searches
@@ -187,7 +183,7 @@ public class CannibalProblem extends UUSearchProblem {
 
 		@Override
 		public int hashCode() {
-			return state[0] * 100 + state[1] * 10 + state[0];
+			return state[0] * 100 + state[1] * 10 + state[2];
 		}
 
 		@Override

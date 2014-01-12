@@ -35,9 +35,11 @@ public abstract class UUSearchProblem {
 	//  and goal conditions, etc.
 	
 	public List<UUSearchNode> breadthFirstSearch(){
+		resetStats();
+		
 		// Goal node that completes the search
 		UUSearchNode goalNode = null;
-		List<UUSearchNode> retArr = null;
+		UUSearchNode grandparent = null;
 		
 		// Initialize queue with start node
 		Queue<UUSearchNode> queue = new LinkedList<UUSearchNode>();
@@ -45,19 +47,26 @@ public abstract class UUSearchProblem {
 		HashMap<Integer, UUSearchNode> visited = new HashMap<Integer, UUSearchNode>();
 		
 		// set the startNode Missionary/Cannibal combo to "visited"
-		int key = startNode.hashCode();
-		
-		// visited 'key' will contain the hashCode of the node 
-		// visited 'value' will contain the node's predecessor node 
-		// startNode has no predecessor
-		visited.put(key, null);
-		
+//		int key = startNode.hashCode();
 		
 		while(!queue.isEmpty()){
+			System.out.println("Queue: " + queue);
 			UUSearchNode parentNode = (UUSearchNode) queue.remove();
+			System.out.println("Using " + parentNode);
+			
+			// make sure we don't exceed max limit
+			if (parentNode.getDepth() > CannibalDriver.MAXDEPTH){
+				System.out.println("Exceeded MAX DEPTH of " + CannibalDriver.MAXDEPTH);
+				System.exit(1);
+			}
+			
+			nodesExplored++;
+			
 			// check if the goal has been reached
 			if (parentNode.goalTest()){
 				goalNode = parentNode;
+				int key = parentNode.hashCode();
+				visited.put(key, grandparent);
 				break;
 			}
 			
@@ -66,26 +75,41 @@ public abstract class UUSearchProblem {
 				// if haven't seen before
 				UUSearchNode childNode = children.get(i);
 				int nodeKey = childNode.hashCode();
+				System.out.println(nodeKey);
 				if (!visited.containsKey(nodeKey)){
 					// mark previous node 
-					visited.put(nodeKey, parentNode);
-					queue.add(childNode);
+//					visited.put(nodeKey, parentNode);
+					if (!queue.contains(childNode)){
+						queue.add(childNode);
+					}
+				} else {
+					System.out.println("Already seen " + childNode);
 				}
 			}
+			// visited 'key' will contain the hashCode of the node 
+			// visited 'value' will contain the node's predecessor node 
+			// startNode has no predecessor
+			int key = parentNode.hashCode();
+			visited.put(key, grandparent);
+			
+			// once all children have been added, mark this node visited
+			grandparent = parentNode;
+			
 		}
 		
-		resetStats();
+		
+		System.out.println(goalNode);
 		
 		// Check if goalNode has been found
 		if (goalNode == null){
 			return null;
 		} else {
 			// return the backchain link
-			UUSearchNode node = visited.get(goalNode.hashCode());
+			List<UUSearchNode> retArr = new ArrayList<UUSearchNode>();
 			
-			while (node != null){
-				retArr.add(node);
-				node = visited.get(node.hashCode());
+			while (goalNode != null){
+				retArr.add(goalNode);
+				goalNode = visited.get(goalNode.hashCode());
 			}
 			return retArr;
 		}

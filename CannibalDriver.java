@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import cannibals.UUSearchProblem.*;
 
 public class CannibalDriver {
+	public static final int MAXDEPTH = 5000;
 	public static void main(String args[]) {
-		public static final int MAXDEPTH = 5000;
 
 		// interesting starting state:  
 		//  8, 5, 1  (IDS slow, but uses least memory.)
@@ -26,9 +26,15 @@ public class CannibalDriver {
 		List<UUSearchProblem.UUSearchNode> path;
 		
 		path = mcProblem.breadthFirstSearch();	
-		System.out.println("bfs path length:  " + path.size() + " " + path);
-		mcProblem.printStats();
-		System.out.println("--------");
+		
+		if (path != null){
+			System.out.println("bfs path length:  " + path.size() + " " + path);
+			mcProblem.printStats();
+			System.out.println("--------");
+		} else {
+			System.out.println("--------");
+			System.out.println("No path!");
+		}
 //		
 //	
 //		path = mcProblem.depthFirstMemoizingSearch(MAXDEPTH);	
