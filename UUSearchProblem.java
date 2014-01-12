@@ -35,6 +35,10 @@ public abstract class UUSearchProblem {
 	//  and goal conditions, etc.
 	
 	public List<UUSearchNode> breadthFirstSearch(){
+		// Goal node that completes the search
+		UUSearchNode goalNode = null;
+		List<UUSearchNode> retArr = null;
+		
 		// Initialize queue with start node
 		Queue<UUSearchNode> queue = new LinkedList<UUSearchNode>();
 		queue.add(startNode);
@@ -48,8 +52,15 @@ public abstract class UUSearchProblem {
 		// startNode has no predecessor
 		visited.put(key, null);
 		
+		
 		while(!queue.isEmpty()){
 			UUSearchNode parentNode = (UUSearchNode) queue.remove();
+			// check if the goal has been reached
+			if (parentNode.goalTest()){
+				goalNode = parentNode;
+				break;
+			}
+			
 			ArrayList<UUSearchNode> children = parentNode.getSuccessors();
 			for(int i=0; i < children.size(); i++){
 				// if haven't seen before
@@ -63,8 +74,21 @@ public abstract class UUSearchProblem {
 			}
 		}
 		
-		
 		resetStats();
+		
+		// Check if goalNode has been found
+		if (goalNode == null){
+			return null;
+		} else {
+			// return the backchain link
+			UUSearchNode node = visited.get(goalNode.hashCode());
+			
+			while (node != null){
+				retArr.add(node);
+				node = visited.get(node.hashCode());
+			}
+			return retArr;
+		}
 	}
 	
 	// backchain should only be used by bfs, not the recursive dfs
