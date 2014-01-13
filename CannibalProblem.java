@@ -145,7 +145,6 @@ public class CannibalProblem extends UUSearchProblem {
 					}
 					
 					boolean isSafe = isSafeState(possNode);
-//					boolean isValid = isValidState(possNode);
 					if (isSafe){
 						// State is valid, add to the array
 						System.out.println("Adding " + possNode);

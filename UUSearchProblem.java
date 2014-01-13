@@ -1,6 +1,5 @@
 package cannibals;
 
-
 // Author: Delos Chang
 // With source: Prof. Balkcom, UUSearch Problem model
 // 1/14/14
@@ -46,21 +45,12 @@ public abstract class UUSearchProblem {
 		queue.add(startNode);
 		HashMap<Integer, UUSearchNode> visited = new HashMap<Integer, UUSearchNode>();
 		
-		// set the startNode Missionary/Cannibal combo to "visited"
-//		int key = startNode.hashCode();
-		
 		while(!queue.isEmpty()){
 			System.out.println("Queue: " + queue);
 			UUSearchNode parentNode = (UUSearchNode) queue.remove();
 			System.out.println("Using " + parentNode);
 			
-			// make sure we don't exceed max limit
-			if (parentNode.getDepth() > CannibalDriver.MAXDEPTH){
-				System.out.println("Exceeded MAX DEPTH of " + CannibalDriver.MAXDEPTH);
-				System.exit(1);
-			}
-			
-			nodesExplored++;
+			incrementNodeCount();
 			
 			// check if the goal has been reached
 			if (parentNode.goalTest()){
@@ -78,7 +68,6 @@ public abstract class UUSearchProblem {
 				System.out.println(nodeKey);
 				if (!visited.containsKey(nodeKey)){
 					// mark previous node 
-//					visited.put(nodeKey, parentNode);
 					if (!queue.contains(childNode)){
 						queue.add(childNode);
 					}
@@ -105,42 +94,87 @@ public abstract class UUSearchProblem {
 			return null;
 		} else {
 			// return the backchain link
-			List<UUSearchNode> retArr = new ArrayList<UUSearchNode>();
-			
-			while (goalNode != null){
-				retArr.add(goalNode);
-				goalNode = visited.get(goalNode.hashCode());
-			}
-			return retArr;
+			return backchain(goalNode, visited);
 		}
 	}
 	
 	// backchain should only be used by bfs, not the recursive dfs
-//	private List<UUSearchNode> backchain(UUSearchNode node,
-//	private void backchain(UUSearchNode node,
-//			HashMap<UUSearchNode, UUSearchNode> visited) {
-//		// you will write this method
-//	}
+	private List<UUSearchNode> backchain(UUSearchNode goalNode,
+			HashMap<Integer, UUSearchNode> visited) {
+		// you will write this method
+		List<UUSearchNode> retArr = new ArrayList<UUSearchNode>();
+		while (goalNode != null){
+			retArr.add(goalNode);
+			goalNode = visited.get(goalNode.hashCode());
+		}
+		return retArr;
+	}
 
-//	public List<UUSearchNode> depthFirstMemoizingSearch(int maxDepth) {
-//		resetStats(); 
-//		
-//		// You will write this method
-//
-//	}
+	public List<UUSearchNode> depthFirstMemoizingSearch(int maxDepth) {
+		resetStats(); 
+		
+		// You will write this method
+		List<UUSearchNode> retArr = new ArrayList<UUSearchNode>();
+		HashMap<UUSearchNode, Integer>visited = new HashMap<UUSearchNode, Integer>();
+		
+		List<UUSearchNode> startChildren = startNode.getSuccessors();
+		
+		// mark startNode as visited
+		visited.put(startNode, startNode.getDepth());
+	
+		for(int i=0; i < startChildren.size(); i++){
+			UUSearchNode child = startChildren.get(i);
+			if (!visited.containsKey(child)){
+				dfs(child, visited, child.getDepth(), CannibalDriver.MAXDEPTH);
+			}
+			
+		}
+		return retArr;
+	}
 
 	// recursive memoizing dfs. Private, because it has the extra
 	// parameters needed for recursion.  
-//	private List<UUSearchNode> dfs(UUSearchNode currentNode, HashMap<UUSearchNode, Integer> visited, 
-//			int depth, int maxDepth) {
-//		
-//		// keep track of stats; these calls charge for the current node
-//		updateMemory(visited.size());
-//		incrementNodeCount();
-//	
-//		// you write this method.  Comments *must* clearly show the 
-//		//  "base case" and "recursive case" that any recursive function has.	
-//	}
+	private List<UUSearchNode> dfs(UUSearchNode currentNode, HashMap<UUSearchNode, Integer> visited, 
+			int depth, int maxDepth) {
+		
+		// keep track of stats; these calls charge for the current node
+		updateMemory(visited.size());
+		incrementNodeCount();
+	
+		// you write this method.  Comments *must* clearly show the 
+		//  "base case" and "recursive case" that any recursive function has.	
+		
+		// BASE CASE: currentNode is the goal Node
+		if (currentNode.goalTest()){
+			
+		} else {
+			// RECURSIVE CASE: not the goalNode, continue recursing down successor line
+			incrementNodeCount();
+			List<UUSearchNode> currentChildren = currentNode.getSuccessors();
+			visited.put(currentNode, currentNode.getDepth());
+			
+			// stop if the depth is exceeded
+			if (depth > CannibalDriver.MAXDEPTH){
+				System.out.println("Depth exceeded!");
+				System.exit(1);
+			}
+			
+			for(int i=0; i < currentChildren.size(); i++){
+				UUSearchNode child = currentChildren.get(i);
+				
+				if (!visited.containsKey(child)){
+					dfs(child, visited, child.getDepth(), maxDepth);
+				} else {
+					// if it is depth limited, we need to make sure that the DFS doesn't stop at 
+					// a duplicate (compare depths)
+					if (visited.get(child) > depth){
+						dfs(child, visited, child.getDepth(), maxDepth);
+					}
+				}
+			}
+		}
+		
+	}
 	
 	
 	// set up the iterative deepening search, and make use of dfspc
@@ -155,7 +189,6 @@ public abstract class UUSearchProblem {
 		resetStats();
 		
 		// I wrote this method for you.  Nothing to do.
-
 		HashSet<UUSearchNode> currentPath = new HashSet<UUSearchNode>();
 
 		return dfsrpc(startNode, currentPath, 0, maxDepth);
