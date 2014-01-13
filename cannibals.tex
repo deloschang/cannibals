@@ -21,16 +21,10 @@
 %Use a drawing program such as inkscape to draw part of the graph of states, including at least the first state, all actions from that state, and all actions from those first-reached states. Show which of these states are legal and which aren't (for example, by using the color of the nodes). Include and describe this figure in your report.
 
 \section{Implementation of the model}
-%Present the work in your report. Include the key parts of your code using the listings environment in LaTeX, and discuss how the code works. Also describe your testing and convince the reader that your testing process demonstrated correctness of your code.
-
+%Present the work in your report. Include the key parts of your code using the listings environment in LaTeX, and discuss how the code works. 
+%Also describe your testing and convince the reader that your testing process demonstrated correctness of your code.
 The model is implemented in 
 \verb`CannibalProblem.java`.  Here's my code for \verb`getSuccessors`:
-
-% Small trick -- dealing with tabs.  
-%  When I copied from eclipse, there were large tabs in the pasted
-%  text that made the following listing not fit on the page.  I did 
-%  a search-and-replace, by copying a tab from this document into 
-%  the "search" entry in the dialog box, and replacing with two spaces.
 
 \begin{lstlisting}
 public ArrayList<UUSearchNode> getSuccessors() {
@@ -109,7 +103,7 @@ run through each combination of missionaries and cannibals. So it checks 3 Missi
 Then, it will check if 
 that combination is valid for the boat size. If it is, it will add or subtract (depending
 on where the boat is) to create the new state. This new state is passed into the \verb`isSafeState`
-to verify whether the missionaries are safe. 
+to verify whether the missionaries are safe. If they are, return true. If not, return false.
 
 I used a method \verb`isSafeState` that returns \verb`true` if the missionaries do not get
 eaten by the cannibals. We can check this by first validating that there are missionaries on
@@ -157,12 +151,122 @@ private boolean isSafeState(CannibalNode node){
 
 \end{lstlisting}
 
+Overall, I tested both methods by manually expanding the states graph from the initial problem setup of
+(331) and then cross-checking with the results that the \verb`getSuccessors` method yields. This verifies
+the method for the first level. We could test the second and third levels in the states graph via grabbing
+the array returned by the first \verb`getSuccessors` method and calling \verb`getSuccessors` again on 
+one of the valid states.
+
+\begin{lstlisting}
+// Test levels 2 and 3
+ArrayList<UUSearchNode> retArr = mcProblem.startNode.getSuccessors();
+System.out.println(retArr.get(0).getSuccessors().get(1).getSuccessors());
+\end{lstlisting}
+
+Since the code works for levels 1, 2 and 3 and matches the actual valid states drawn manually, 
+it covers the the cases for the boat going from one side to another. In other words, given an arbitrary
+state at level x, we get the valid successor states for state x+1 level. Thus, by induction, we prove
+the correctness of the code.
+
 \section{Breadth-first search}
 %Test, present, and discuss your code in the report. A good test would at the very least check the breadth-first search with respect to the nodes you drew in the intro.
 %Show the solution output by your code for missionaries and cannibals.
 
 
 \section{Memoizing depth-first search}
+\begin{lstlisting}
+public List<UUSearchNode> depthFirstMemoizingSearch(int maxDepth) {
+  resetStats(); 
+  
+  // You will write this method
+  List<UUSearchNode> retArr = new ArrayList<UUSearchNode>();
+  HashMap<UUSearchNode, Integer>visited = new HashMap<UUSearchNode, Integer>();
+  
+  List<UUSearchNode> startChildren = startNode.getSuccessors();
+  
+  // mark startNode as visited
+  visited.put(startNode, startNode.getDepth());
+
+  for(int i=0; i < startChildren.size(); i++){
+    UUSearchNode child = startChildren.get(i);
+    if (!visited.containsKey(child)){
+      retArr = dfs(child, visited, child.getDepth(), CannibalDriver.MAXDEPTH);
+      if (retArr != null){
+        return retArr;
+      }
+    }
+    
+  }
+  return null;
+}
+
+// recursive memoizing dfs. Private, because it has the extra
+// parameters needed for recursion.  
+private List<UUSearchNode> dfs(UUSearchNode currentNode, HashMap<UUSearchNode, Integer> visited, 
+    int depth, int maxDepth) {
+  System.out.println("Following " + currentNode);
+  
+  // keep track of stats; these calls charge for the current node
+  updateMemory(visited.size());
+  incrementNodeCount();
+  List<UUSearchNode> retArr= new ArrayList<UUSearchNode>();
+
+  // you write this method.  Comments *must* clearly show the 
+  //  "base case" and "recursive case" that any recursive function has.	
+  
+  // BASE CASE: currentNode is the goal Node
+  if (currentNode.goalTest()){
+    retArr.add(currentNode);
+    return retArr;
+  } else {
+    // RECURSIVE CASE: not the goalNode, continue recursing down successor line
+    List<UUSearchNode> currentChildren = currentNode.getSuccessors();
+    visited.put(currentNode, currentNode.getDepth());
+    
+    // stop if the depth is exceeded
+    if (depth > maxDepth){
+      System.out.println("Depth exceeded! Try a shorter route");
+      return null;
+    }
+    
+    for(int i=0; i < currentChildren.size(); i++){
+      UUSearchNode child = currentChildren.get(i);
+      
+      // if it is depth limited, we need to make sure that the DFS doesn't stop at 
+      // a duplicate (compare depths)
+      if (!visited.containsKey(child) || visited.get(child) > depth){
+        retArr = dfs(child, visited, child.getDepth(), maxDepth);
+        if (retArr != null){
+          retArr.add(child);
+          return retArr;
+        }
+      } 
+    }
+  System.out.println("No path found!");
+    return null;
+  }
+  
+}
+
+\end{lstlisting}
+%Every recursive algorithm has at least one base case and at least one recursive case. What are they for this problem? Present and discuss your code, clearly labelling the base cases and the recursive cases.
+The base case for memoizing DFS is if the node being examined is the goal node. In that case, we do not enter the recursive case and we can simply add this goal node into a list
+and return it.
+
+The recursive case is if the node being examined is NOT the goal node. 
+
+%Does memoizing dfs save significant memory with respect to breadth-first search? Why or why not?
+However, memoizing dfs does NOT save significant memory compared to BFS. First, we consider whether the state space is finite or infinite. 
+Given a finite state space of size $n$, the HashMap implemented in both DFS and BFS cannot exceed $n$ nodes at any given time. Thus,
+both BFS and DFS implementations in the finite search space have $O(n)$ memory usage. 
+
+However, by nature of BFS, because it ripples out from the
+start node and checks each successive depth from the start node, in an infinite state space, BFS will terminate with time complexity $O(b^d)$, 
+where $d$ is the depth of the goal from start node and $b$ is the upper bound of the graph's branching factor. 
+
+Conversely, in an infinite search space, DFS may not even terminate! Hence, in some cases, DFS may have substantially more exhaustive
+memory usage. 
+
 
 \section{Path-checking depth-first search}
 
