@@ -25,16 +25,16 @@ public class CannibalDriver {
 	
 		List<UUSearchProblem.UUSearchNode> path;
 		
-		path = mcProblem.breadthFirstSearch();	
-		
-		if (path != null){
-			System.out.println("bfs path length:  " + path.size() + " " + path);
-			mcProblem.printStats();
-			System.out.println("--------");
-		} else {
-			System.out.println("--------");
-			System.out.println("No path!");
-		}
+//		path = mcProblem.breadthFirstSearch();	
+//		
+//		if (path != null){
+//			System.out.println("bfs path length:  " + path.size() + " " + path);
+//			mcProblem.printStats();
+//			System.out.println("--------");
+//		} else {
+//			System.out.println("--------");
+//			System.out.println("No path!");
+//		}
 
 
 		path = mcProblem.depthFirstMemoizingSearch(MAXDEPTH);	

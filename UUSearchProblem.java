@@ -125,31 +125,36 @@ public abstract class UUSearchProblem {
 		for(int i=0; i < startChildren.size(); i++){
 			UUSearchNode child = startChildren.get(i);
 			if (!visited.containsKey(child)){
-				dfs(child, visited, child.getDepth(), CannibalDriver.MAXDEPTH);
+				retArr = dfs(child, visited, child.getDepth(), CannibalDriver.MAXDEPTH);
+				if (retArr != null){
+					return retArr;
+				}
 			}
 			
 		}
-		return retArr;
+		return null;
 	}
 
 	// recursive memoizing dfs. Private, because it has the extra
 	// parameters needed for recursion.  
 	private List<UUSearchNode> dfs(UUSearchNode currentNode, HashMap<UUSearchNode, Integer> visited, 
 			int depth, int maxDepth) {
+		System.out.println("Following " + currentNode);
 		
 		// keep track of stats; these calls charge for the current node
 		updateMemory(visited.size());
 		incrementNodeCount();
+		List<UUSearchNode> retArr= new ArrayList<UUSearchNode>();
 	
 		// you write this method.  Comments *must* clearly show the 
 		//  "base case" and "recursive case" that any recursive function has.	
 		
 		// BASE CASE: currentNode is the goal Node
 		if (currentNode.goalTest()){
-			
+			retArr.add(currentNode);
+			return retArr;
 		} else {
 			// RECURSIVE CASE: not the goalNode, continue recursing down successor line
-			incrementNodeCount();
 			List<UUSearchNode> currentChildren = currentNode.getSuccessors();
 			visited.put(currentNode, currentNode.getDepth());
 			
@@ -162,16 +167,17 @@ public abstract class UUSearchProblem {
 			for(int i=0; i < currentChildren.size(); i++){
 				UUSearchNode child = currentChildren.get(i);
 				
-				if (!visited.containsKey(child)){
-					dfs(child, visited, child.getDepth(), maxDepth);
-				} else {
-					// if it is depth limited, we need to make sure that the DFS doesn't stop at 
-					// a duplicate (compare depths)
-					if (visited.get(child) > depth){
-						dfs(child, visited, child.getDepth(), maxDepth);
+				// if it is depth limited, we need to make sure that the DFS doesn't stop at 
+				// a duplicate (compare depths)
+				if (!visited.containsKey(child) || visited.get(child) > depth){
+					retArr = dfs(child, visited, child.getDepth(), maxDepth);
+					if (retArr != null){
+						retArr.add(child);
+						return retArr;
 					}
-				}
+				} 
 			}
+			return null;
 		}
 		
 	}
