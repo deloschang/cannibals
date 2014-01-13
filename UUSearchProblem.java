@@ -46,6 +46,7 @@ public abstract class UUSearchProblem {
 		HashMap<Integer, UUSearchNode> visited = new HashMap<Integer, UUSearchNode>();
 		
 		while(!queue.isEmpty()){
+			updateMemory(queue.size() + visited.size());
 			System.out.println("Queue: " + queue);
 			UUSearchNode parentNode = (UUSearchNode) queue.remove();
 			System.out.println("Using " + parentNode);
@@ -159,7 +160,7 @@ public abstract class UUSearchProblem {
 			visited.put(currentNode, currentNode.getDepth());
 			
 			// stop if the depth is exceeded
-			if (depth > CannibalDriver.MAXDEPTH){
+			if (depth > maxDepth){
 				System.out.println("Depth exceeded! Try a shorter route");
 				return null;
 			}
@@ -177,6 +178,7 @@ public abstract class UUSearchProblem {
 					}
 				} 
 			}
+		System.out.println("No path found!");
 			return null;
 		}
 		
@@ -184,10 +186,19 @@ public abstract class UUSearchProblem {
 	
 	
 	// set up the iterative deepening search, and make use of dfspc
-//	public List<UUSearchNode> IDSearch(int maxDepth) {
-//		resetStats();
-//		// you write this method
-//	}
+	public List<UUSearchNode> IDSearch(int maxDepth) {
+		resetStats();
+		// you write this method
+		for(int i=0; i <= maxDepth; i++){
+			HashMap<UUSearchNode, Integer> visited = new HashMap<UUSearchNode, Integer>();
+			List<UUSearchNode> retArr = dfs(startNode, visited, 0, maxDepth);
+			if (retArr != null){
+				return retArr;
+			}
+		}
+		System.out.println("No path found!");
+		return null;
+	}
 
 	// set up the depth-first-search (path-checking version), 
 	//  but call dfspc to do the real work
@@ -198,7 +209,6 @@ public abstract class UUSearchProblem {
 		HashSet<UUSearchNode> currentPath = new HashSet<UUSearchNode>();
 
 		return dfsrpc(startNode, currentPath, 0, maxDepth);
-
 	}
 
 	// recursive path-checking dfs. Private, because it has the extra
@@ -207,8 +217,47 @@ public abstract class UUSearchProblem {
 			int depth, int maxDepth) {
 
 		// you write this method
+		System.out.println("Following " + currentNode);
+		currentPath.add(currentNode);
+		
+		// keep track of stats; these calls charge for the current node
+		updateMemory(currentPath.size());
+		incrementNodeCount();
+		List<UUSearchNode> retArr= new ArrayList<UUSearchNode>();
 	
-		return null;
+		// you write this method.  Comments *must* clearly show the 
+		//  "base case" and "recursive case" that any recursive function has.	
+		
+		// BASE CASE: currentNode is the goal Node
+		if (currentNode.goalTest()){
+			retArr.add(currentNode);
+			return retArr;
+		} else {
+			// RECURSIVE CASE: not the goalNode, continue recursing down successor line
+			List<UUSearchNode> currentChildren = currentNode.getSuccessors();
+			
+			// stop if the depth is exceeded
+			if (depth > maxDepth){
+				System.out.println("Depth exceeded! Try a shorter route");
+				return null;
+			}
+			
+			for(int i=0; i < currentChildren.size(); i++){
+				UUSearchNode child = currentChildren.get(i);
+				
+				// if it is depth limited, we need to make sure that the DFS doesn't stop at 
+				// a duplicate (compare depths)
+				if (!currentPath.contains(child)){
+					retArr = dfsrpc(child, currentPath, child.getDepth(), maxDepth);
+					if (retArr != null){
+						retArr.add(child);
+						return retArr;
+					}
+				} 
+			}
+			return null;
+		}
+	
 	}
 
 	protected void resetStats() {

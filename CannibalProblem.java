@@ -155,14 +155,6 @@ public class CannibalProblem extends UUSearchProblem {
 					}
 				}
 			}
-			// add actions (denoted by how many missionaries and cannibals to put
-			// in the boat) to current state. 
-
-			// You write this method.  Factoring is usually worthwhile.  In my
-			//  implementation, I wrote an additional private method 'isSafeState',
-			//  that I made use of in getSuccessors.  You may write any method
-			//  you like in support of getSuccessors.
-			System.out.println(retArr);
 			return retArr;
 
 		}

@@ -12,11 +12,12 @@ public class CannibalDriver {
 	public static void main(String args[]) {
 
 		// interesting starting state:  
-		//  8, 5, 1  (IDS slow, but uses least memory.)
+//		  8, 5, 1  (IDS slow, but uses least memory.)
 
 
 		// set up the "standard" 331 problem:
 		CannibalProblem mcProblem = new CannibalProblem(3, 3, 1, 0, 0, 0);
+//		CannibalProblem mcProblem = new CannibalProblem(8, 5, 1, 0, 0, 0);
 		
 		// Test levels 2 and 3
 //		ArrayList<UUSearchNode> retArr = mcProblem.startNode.getSuccessors();
@@ -37,20 +38,20 @@ public class CannibalDriver {
 //		}
 
 
-		path = mcProblem.depthFirstMemoizingSearch(MAXDEPTH);	
-		System.out.println("dfs memoizing path length:" + path.size());
-		mcProblem.printStats();
-		System.out.println("--------");
+//		path = mcProblem.depthFirstMemoizingSearch(MAXDEPTH);	
+//		System.out.println("dfs memoizing path length:" + path.size());
+//		mcProblem.printStats();
+//		System.out.println("--------");
 //		
 //		path = mcProblem.depthFirstPathCheckingSearch(MAXDEPTH);
 //		System.out.println("dfs path checking path length:" + path.size());
 //		mcProblem.printStats();
 //		
 //		
-//		System.out.println("--------");
-//		path = mcProblem.IDSearch(MAXDEPTH);
-//		System.out.println("Iterative deepening (path checking) path length:" + path.size());
-//		mcProblem.printStats();
+		System.out.println("--------");
+		path = mcProblem.IDSearch(MAXDEPTH);
+		System.out.println("Iterative deepening (path checking) path length:" + path.size());
+		mcProblem.printStats();
 		
 	}
 }
