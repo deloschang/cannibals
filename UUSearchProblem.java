@@ -160,8 +160,8 @@ public abstract class UUSearchProblem {
 			
 			// stop if the depth is exceeded
 			if (depth > CannibalDriver.MAXDEPTH){
-				System.out.println("Depth exceeded!");
-				System.exit(1);
+				System.out.println("Depth exceeded! Try a shorter route");
+				return null;
 			}
 			
 			for(int i=0; i < currentChildren.size(); i++){
