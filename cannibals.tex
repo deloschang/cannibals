@@ -5,6 +5,7 @@
 
 
 \usepackage{listings}  %  needed for source code listings
+\usepackage{graphicx}
 \lstset{language=Java}         
 
 % set the document title, author, and date here.
@@ -17,8 +18,29 @@
 \maketitle
 
 \section{Introduction}
-%States are either legal, or not legal. First, give an upper bound on the number of states, without considering legality of states. (Hint -- 331 is one state. 231 another, although illegal. Keep counting.) Describe how you got this number.
-%Use a drawing program such as inkscape to draw part of the graph of states, including at least the first state, all actions from that state, and all actions from those first-reached states. Show which of these states are legal and which aren't (for example, by using the color of the nodes). Include and describe this figure in your report.
+%States are either legal, or not legal. 
+%First, give an upper bound on the number of states, without considering legality of states. 
+% (Hint -- 331 is one state. 231 another, although illegal. Keep counting.) Describe how you got this number.
+%Use a drawing program such as inkscape to draw part of the graph of states, 
+% including at least the first state, all actions from that state, and all actions from those first-reached states. 
+% Show which of these states are legal and which aren't (for example, by using the color of the nodes). 
+% Include and describe this figure in your report.
+
+In the Missionaries and Cannibals problem, we can represent the missionaries, cannibals and position of the boat 
+using the notation (m, c, b). If boat has a value of $1$, we assume it is on the starting side of the river. Thus, 
+the initial problem state is represented as (3,3,1). 
+
+We can find an upper bound on the number of states by considering that for the number of missionaries and cannibals
+on the starting side of the river, this value must be between 0-4, inclusive. The boat must either be on the starting
+side or the other side (so only 2 options). We can multiply these options to arrive at $4 \cdot 4 \cdot 2 = 32$ total
+unique permutations of the number of states. This is the upper bound. More generally, give $m$ missionaries and $c$
+cannibals, we can say the upper bound for the problem is $(m+1) \cdot (c+1) \cdot 2$ states. 
+
+A graphical representation of the graph of first few level of states can be found as Figure 1: 
+
+\hspace*{-2in}
+\includegraphics{drawing.pdf}
+
 
 \section{Implementation of the model}
 %Present the work in your report. Include the key parts of your code using the listings environment in LaTeX, and discuss how the code works. 
@@ -250,6 +272,22 @@ private List<UUSearchNode> backchain(UUSearchNode goalNode,
 %Test, present, and discuss your code in the report. A good test would at the very least check the breadth-first search with respect to the nodes you drew in the intro.
 %Show the solution output by your code for missionaries and cannibals.
 
+We implement BFS with a queue and a HashMap. 
+The queue is FIFO and allows us to dequeue the startNode and enqueue its successors, then dequeue the
+first level of the startNode's successors and enqueue $their$ successors etc. By nature of BFS, we 
+successively check each depth level from the startNode. We also avoid duplicates by checking if
+the queue already contains some node. 
+
+The HashMap visited will keep track of which nodes have already been 
+visited by using the provided $hashCode$ function. The key of the HashMap is the hashcode of the node. 
+The value of the HashMap is the predecessor node that links to it in the graph. We track the memory by considering the size of the queue
+and the size of the $visited$ HashMap at any point. Thus, when we find the goalnode, we can simply use a 
+$while$ loop to backchain from goalnode using the $visited$ HashMap to find its predecessor. 
+
+% testing %
+% solution output %
+
+
 
 \section{Memoizing depth-first search}
 \begin{lstlisting}
@@ -362,12 +400,30 @@ memory usage.
 
 
 \section{Path-checking depth-first search}
+% Write it. Present it. Discuss it. %
+
+In Path-checking DFS, we ensure that the current path does not contain duplicates by using a set. As a result,
+we avoid infinite loops. Each time we're about to call $getSucessors()$ on a child node, we check the set
+to ensure that it has not already been added. 
+
+This only ensures that there are no duplicates in the $current$ path, but we could run into redundant 
+nodes in other paths. The trade-off, however, is that we use less memory than simply memoizing everything. 
+
+% Does path-checking depth-first search save significant memory with respect to breadth-first search?  %
+% Draw an example of a graph where path-checking dfs takes much more run-time than breadth-first search; 
+% include in your report and discuss. %
 
 \section{Iterative deepening search}
+% On a graph, would it make sense to use path-checking dfs, 
+% or would you prefer memoizing dfs in your iterative deepening search? 
+% Consider both time and memory aspects. (Hint. If it's not better than bfs, just use bfs.)
 
 
 
 \section{Lossy missionaries and cannibals}
+% What would the state for this problem be? 
+% What changes would you have to make to your code to implement a solution? 
+% Give an upper bound on the number of possible states for this problem.
 
 
 
