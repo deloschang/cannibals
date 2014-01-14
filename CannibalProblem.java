@@ -103,7 +103,6 @@ public class CannibalProblem extends UUSearchProblem {
 			
 			// Determine which missionaries and cannibals can travel
 			if (boatPlace == 1){
-				System.out.println("Boat @ starting side");
 				// the candidate missionaries that can travel on the boat
 				candMissionaries = state[0];
 				candCannibals = state[1];
@@ -120,7 +119,6 @@ public class CannibalProblem extends UUSearchProblem {
 			
 			for(int missCount=candMissionaries; missCount>=0; missCount--){
 				for(int cannCount=candCannibals; cannCount>=0; cannCount--){
-					System.out.println("Checking ("+missCount+","+cannCount+")");
 					CannibalNode possNode;
 					
 					// Must fit in boat and have at least one missionary rowing
@@ -156,7 +154,6 @@ public class CannibalProblem extends UUSearchProblem {
 				}
 			}
 			return retArr;
-
 		}
 		
 		@Override

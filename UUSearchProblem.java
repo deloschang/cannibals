@@ -66,7 +66,6 @@ public abstract class UUSearchProblem {
 				// if haven't seen before
 				UUSearchNode childNode = children.get(i);
 				int nodeKey = childNode.hashCode();
-				System.out.println(nodeKey);
 				if (!visited.containsKey(nodeKey)){
 					// mark previous node 
 					if (!queue.contains(childNode)){
@@ -185,7 +184,6 @@ public abstract class UUSearchProblem {
 	// set up the iterative deepening search, and make use of dfspc
 	public List<UUSearchNode> IDSearch(int maxDepth) {
 		resetStats();
-		// you write this method
 		for(int i=0; i <= maxDepth; i++){
 			HashMap<UUSearchNode, Integer> visited = new HashMap<UUSearchNode, Integer>();
 			List<UUSearchNode> retArr = dfs(startNode, visited, 0, maxDepth);

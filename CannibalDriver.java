@@ -15,7 +15,7 @@ public class CannibalDriver {
 //		  8, 5, 1  (IDS slow, but uses least memory.)
 
 
-		// set up the "standard" 331 problem:
+//		 set up the "standard" 331 problem:
 		CannibalProblem mcProblem = new CannibalProblem(3, 3, 1, 0, 0, 0);
 //		CannibalProblem mcProblem = new CannibalProblem(8, 5, 1, 0, 0, 0);
 		
@@ -25,7 +25,6 @@ public class CannibalDriver {
 		
 	
 		List<UUSearchProblem.UUSearchNode> path;
-		
 //		path = mcProblem.breadthFirstSearch();	
 //		
 //		if (path != null){
@@ -44,7 +43,9 @@ public class CannibalDriver {
 //		System.out.println("--------");
 //		
 //		path = mcProblem.depthFirstPathCheckingSearch(MAXDEPTH);
-//		System.out.println("dfs path checking path length:" + path.size());
+//		if (path != null){
+//			System.out.println("dfs path checking path length:" + path.size());
+//		}
 //		mcProblem.printStats();
 //		
 //		
