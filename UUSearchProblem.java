@@ -102,7 +102,6 @@ public abstract class UUSearchProblem {
 	// backchain should only be used by bfs, not the recursive dfs
 	private List<UUSearchNode> backchain(UUSearchNode goalNode,
 			HashMap<Integer, UUSearchNode> visited) {
-		// you will write this method
 		List<UUSearchNode> retArr = new ArrayList<UUSearchNode>();
 		while (goalNode != null){
 			retArr.add(goalNode);
@@ -113,8 +112,6 @@ public abstract class UUSearchProblem {
 
 	public List<UUSearchNode> depthFirstMemoizingSearch(int maxDepth) {
 		resetStats(); 
-		
-		// You will write this method
 		List<UUSearchNode> retArr = new ArrayList<UUSearchNode>();
 		HashMap<UUSearchNode, Integer>visited = new HashMap<UUSearchNode, Integer>();
 		

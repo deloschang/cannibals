@@ -169,6 +169,84 @@ state at level x, we get the valid successor states for state x+1 level. Thus, b
 the correctness of the code.
 
 \section{Breadth-first search}
+\begin{lstlisting}
+public List<UUSearchNode> breadthFirstSearch(){
+  resetStats();
+  
+  // Goal node that completes the search
+  UUSearchNode goalNode = null;
+  UUSearchNode grandparent = null;
+  
+  // Initialize queue with start node
+  Queue<UUSearchNode> queue = new LinkedList<UUSearchNode>();
+  queue.add(startNode);
+  HashMap<Integer, UUSearchNode> visited = new HashMap<Integer, UUSearchNode>();
+  
+  while(!queue.isEmpty()){
+    updateMemory(queue.size() + visited.size());
+    System.out.println("Queue: " + queue);
+    UUSearchNode parentNode = (UUSearchNode) queue.remove();
+    System.out.println("Using " + parentNode);
+    
+    incrementNodeCount();
+    
+    // check if the goal has been reached
+    if (parentNode.goalTest()){
+      goalNode = parentNode;
+      int key = parentNode.hashCode();
+      visited.put(key, grandparent);
+      break;
+    }
+    
+    ArrayList<UUSearchNode> children = parentNode.getSuccessors();
+    for(int i=0; i < children.size(); i++){
+      // if haven't seen before
+      UUSearchNode childNode = children.get(i);
+      int nodeKey = childNode.hashCode();
+      System.out.println(nodeKey);
+      if (!visited.containsKey(nodeKey)){
+        // mark previous node 
+        if (!queue.contains(childNode)){
+          queue.add(childNode);
+        }
+      } else {
+        System.out.println("Already seen " + childNode);
+      }
+    }
+    // visited 'key' will contain the hashCode of the node 
+    // visited 'value' will contain the node's predecessor node 
+    // startNode has no predecessor
+    int key = parentNode.hashCode();
+    visited.put(key, grandparent);
+    
+    // once all children have been added, mark this node visited
+    grandparent = parentNode;
+    
+  }
+  
+  
+  System.out.println(goalNode);
+  
+  // Check if goalNode has been found
+  if (goalNode == null){
+    return null;
+  } else {
+    // return the backchain link
+    return backchain(goalNode, visited);
+  }
+}
+
+// backchain should only be used by bfs, not the recursive dfs
+private List<UUSearchNode> backchain(UUSearchNode goalNode,
+    HashMap<Integer, UUSearchNode> visited) {
+  List<UUSearchNode> retArr = new ArrayList<UUSearchNode>();
+  while (goalNode != null){
+    retArr.add(goalNode);
+    goalNode = visited.get(goalNode.hashCode());
+  }
+  return retArr;
+}
+\end{lstlisting}
 %Test, present, and discuss your code in the report. A good test would at the very least check the breadth-first search with respect to the nodes you drew in the intro.
 %Show the solution output by your code for missionaries and cannibals.
 
@@ -250,10 +328,25 @@ private List<UUSearchNode> dfs(UUSearchNode currentNode, HashMap<UUSearchNode, I
 
 \end{lstlisting}
 %Every recursive algorithm has at least one base case and at least one recursive case. What are they for this problem? Present and discuss your code, clearly labelling the base cases and the recursive cases.
+We start by initializing the array which will be returned as the solution. We also initialize the HashMap which will
+mark whether the node has been visited and will have the key as the depth. We add the depth because, in some cases, 
+if one sets a $MAX_DEPTH$ for DFS, DFS may explore one path and exceed this max depth. Then, when DFS checks shorter
+paths, it may run into a duplicate. We want DFS to continue if this duplicate's depth is smaller than the original node's
+depth. Hence, we add the $visited.get(child) > depth$ method in the recursive DFS method.
+
 The base case for memoizing DFS is if the node being examined is the goal node. In that case, we do not enter the recursive case and we can simply add this goal node into a list
 and return it.
 
 The recursive case is if the node being examined is NOT the goal node. 
+
+We loop through each one of the $startNode$'s successors and then run the recursive DFS method on them. In the
+recursive DFS function, if the node has already been seen, we return $null$. If the node has not been seen,
+we run recursive DFS again on each of the node's successors.
+
+When the goal node is finally reached, as said before, we add it to a list and return that list. Then in the
+recursive DFS function, if the returned list is NOT $null$, then we add the currently examined node to that list
+and return the expanded list. In this way, we build the solution from the ground-up, starting with the
+goal node and then progressively adding nodes that link to one another.
 
 %Does memoizing dfs save significant memory with respect to breadth-first search? Why or why not?
 However, memoizing dfs does NOT save significant memory compared to BFS. First, we consider whether the state space is finite or infinite. 
